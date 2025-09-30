@@ -40,8 +40,8 @@ except Exception:
     Spectrum = None
 
 ROOT = Path(__file__).resolve().parent.parent  # project root (/home/...)
-DATA_DIR = ROOT / 'data'
-OUT_ROOT = DATA_DIR  # place outputs next to inputs
+DATA_DIR = ROOT / 'data' / 'raw'  # read inputs from data/raw
+OUT_ROOT = ROOT / 'data'          # write outputs under data/
 
 FILES = [
     DATA_DIR / 'ICRMS-1.xlsx',
