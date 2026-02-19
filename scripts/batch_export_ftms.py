@@ -20,6 +20,8 @@ import zipfile
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+import matplotlib as mpl
+mpl.rcParams['font.family'] = 'Arial'
 
 # # 构造一个假模块 numpy.lib.function_base，只提供 pykrev 需要的对象
 # mod = types.ModuleType('numpy.lib.function_base')
@@ -182,6 +184,37 @@ def compute_global_limits(file_paths):
     return y_lims, dbe_limits, density_limits
 
 
+def apply_custom_styling(ax):
+    """
+    Apply custom styling to match lost_gained_vankrevelen.py
+
+    # Alternative styling options (uncomment to use):
+    # Minimal styling (backup version):
+    # for spine in ax.spines.values():
+    #     spine.set_linewidth(1.0)
+    # ax.set_xlabel('O/C', fontsize=14)
+    # ax.set_ylabel('H/C', fontsize=14)
+    # ax.tick_params(axis='both', which='major', labelsize=12)
+
+    # Light styling:
+    # for spine in ax.spines.values():
+    #     spine.set_linewidth(1.2)
+    # ax.set_xlabel('O/C', fontsize=16, fontweight='normal')
+    # ax.set_ylabel('H/C', fontsize=16, fontweight='normal')
+    # ax.tick_params(axis='both', which='major', labelsize=13, width=2, length=5)
+    # for label in ax.get_xticklabels() + ax.get_yticklabels():
+    #     label.set_fontweight('normal')
+    """
+    for spine in ax.spines.values():
+        spine.set_linewidth(1.5)
+    ax.set_xlabel('O/C', fontsize=18, fontweight='bold')
+    ax.set_ylabel('H/C', fontsize=18, fontweight='bold')
+    ax.tick_params(axis='both', which='major', labelsize=14, width=2.5, length=6)
+    ax.tick_params(axis='both', which='minor', width=1.5, length=4)
+    for label in ax.get_xticklabels() + ax.get_yticklabels():
+        label.set_fontweight('bold')
+
+
 def make_van_krevelen(ms_obj, dbe, out_png: Path, y_lims=None, dbe_limits=None):
     fig, ax = pk.van_krevelen_plot(ms_obj, y_ratio='HC', c=dbe, s=7, cmap='plasma')
     scatter = ax.collections[0] if ax.collections else None
@@ -194,9 +227,15 @@ def make_van_krevelen(ms_obj, dbe, out_png: Path, y_lims=None, dbe_limits=None):
     # Apply unified y-axis limits if provided
     if y_lims is not None:
         ax.set_ylim(y_lims)
+
+    # Custom styling to match lost_gained_vankrevelen.py
+    apply_custom_styling(ax)
+
     if scatter is not None:
         cbar = plt.colorbar(scatter, ax=ax)
-        cbar.set_label('DBE')
+        cbar.set_label('DBE', fontsize=14, fontweight='bold')
+        for label in cbar.ax.get_yticklabels():
+            label.set_fontweight('bold')
     ax.set_title('Van Krevelen Plot (colored by DBE)')
     ax.grid(False)
     plt.tight_layout()
@@ -219,7 +258,14 @@ def make_extra_plots(ms_obj, dbe, ai, out_dir: Path, y_lims=None, density_limits
         # Apply unified y-axis limits if provided
         if y_lims is not None:
             ax.set_ylim(y_lims)
-        plt.colorbar(scatter if scatter is not None else ax.collections[0], ax=ax).set_label('Kernel Density')
+
+        # Custom styling
+        apply_custom_styling(ax)
+
+        cbar = plt.colorbar(scatter if scatter is not None else ax.collections[0], ax=ax)
+        cbar.set_label('Kernel Density', fontsize=14, fontweight='bold')
+        for label in cbar.ax.get_yticklabels():
+            label.set_fontweight('bold')
         ax.grid(False)
         plt.tight_layout()
         fig.savefig(out_dir / 'van_krevelen_density.png', dpi=200)
@@ -230,7 +276,10 @@ def make_extra_plots(ms_obj, dbe, ai, out_dir: Path, y_lims=None, density_limits
     # 5B. Histogram heatmap (equal bins)
     try:
         fig, ax, d_index = pk.van_krevelen_histogram(ms_obj, bins=[10, 10], cmap='viridis')
-        plt.colorbar(ax.collections[0], ax=ax).set_label('Counts')
+        cbar = plt.colorbar(ax.collections[0], ax=ax)
+        cbar.set_label('Counts', fontsize=14, fontweight='bold')
+        for label in cbar.ax.get_yticklabels():
+            label.set_fontweight('bold')
         plt.tight_layout()
         fig.savefig(out_dir / 'van_krevelen_hist_10x10.png', dpi=200)
         plt.close(fig)
@@ -244,7 +293,10 @@ def make_extra_plots(ms_obj, dbe, ai, out_dir: Path, y_lims=None, density_limits
             bins=[np.linspace(0, 1, 5), np.linspace(0, 2, 5)],
             cmap='cividis'
         )
-        plt.colorbar(ax.collections[0], ax=ax).set_label('Counts')
+        cbar = plt.colorbar(ax.collections[0], ax=ax)
+        cbar.set_label('Counts', fontsize=14, fontweight='bold')
+        for label in cbar.ax.get_yticklabels():
+            label.set_fontweight('bold')
         plt.tight_layout()
         fig.savefig(out_dir / 'van_krevelen_hist_custom.png', dpi=200)
         plt.close(fig)
@@ -256,7 +308,10 @@ def make_extra_plots(ms_obj, dbe, ai, out_dir: Path, y_lims=None, density_limits
         fig, ax, (_km, _kmd) = pk.kendrick_mass_defect_plot(
             ms_obj, base='CHON', rounding='ceil', s=3, c=ai
         )
-        plt.colorbar(ax.collections[0], ax=ax).set_label('Aromaticity Index')
+        cbar = plt.colorbar(ax.collections[0], ax=ax)
+        cbar.set_label('Aromaticity Index', fontsize=14, fontweight='bold')
+        for label in cbar.ax.get_yticklabels():
+            label.set_fontweight('bold')
         plt.xlim([0, 1000])
         plt.tight_layout()
         fig.savefig(out_dir / 'kendrick_mass_defect_ai.png', dpi=200)

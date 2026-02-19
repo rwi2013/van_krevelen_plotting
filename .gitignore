@@ -1,4 +1,29 @@
-
 # macOS
 .DS_Store
 */.DS_Store
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+.venv/
+venv/
+ENV/
+
+# Backup files and intermediate versions
+*.backup
+*_v[0-9].py
+*_v[0-9][0-9].py
+*test_variations.py
+split_2x2_grid.py
+
+# Data output (large/generated files)
+# Uncomment if you want to exclude these from git:
+# data/*_output/
+# data/*_output.zip
+# data/comparisons/
+# data/comparisons_grid/
+# data/density_grid/
+# data/density_variations/

@@ -18,6 +18,10 @@ python scripts/batch_export_ftms.py
 
 # 4) Pairwise Lost/Gained + Venn (area-matched)
 python scripts/lost_gained_vankrevelen.py
+
+# 5) Generate 2x2 grid plots (optional)
+python scripts/plot_density_grid.py          # Density-colored VK plots
+python scripts/plot_lost_gained_grid.py      # Lost/Gained comparison grid
 ```
 
 Defaults:
@@ -36,14 +40,30 @@ Accessed on.
 ```
 ├── scripts/
 │   ├── FT-MS质谱数据的初步处理.ipynb  # Interactive analysis notebook
-│   ├── batch_export_ftms.py           # Batch processing script
-│   └── lost_gained_vankrevelen.py    # Lost/Gained + Venn (area-matched)
+│   ├── batch_export_ftms.py           # Batch processing: tables + individual plots
+│   ├── lost_gained_vankrevelen.py     # Lost/Gained + Venn (area-matched)
+│   ├── plot_density_grid.py           # 2x2 grid: density-colored VK plots
+│   └── plot_lost_gained_grid.py       # 2x2 grid: Lost/Gained VK comparisons
 ├── data/
-│   └── raw/                          # Put input Excel here (ICRMS-#.xlsx)
+│   ├── raw/                           # Put input Excel here (ICRMS-#.xlsx)
+│   ├── ICRMS-#_output/                # Batch processing output (auto-generated)
+│   ├── density_grid/                  # Density grid plots (auto-generated)
+│   └── comparisons_grid/              # Lost/Gained grid plots (auto-generated)
 ├── .venv/                             # Python 3.12 virtual environment
 ├── .venv311/                          # Python 3.11 virtual environment (for pykrev)
 └── README.md
 ```
+
+### Script Overview
+
+| Script | Purpose | Output |
+|--------|---------|--------|
+| `batch_export_ftms.py` | Process individual datasets | `data/ICRMS-#_output/` |
+| `lost_gained_vankrevelen.py` | Pairwise Lost/Gained comparison | `data/raw/comparisons/` |
+| `plot_density_grid.py` | 2x2 grid of density plots | `data/density_grid/` |
+| `plot_lost_gained_grid.py` | 2x2 grid of Lost/Gained plots | `data/comparisons_grid/` |
+
+**Note**: Alternative styling options from previous versions are preserved as comments in each script for easy customization.
 
 ## Features
 
@@ -207,6 +227,52 @@ ICRMS-4 -> NOM-CeO2-Dark
 Venn diagram legends appear as two aligned rows at the top (left-row for the left dataset, second-row for the right dataset),
 no Venn title. Percentages shown in the Venn are left-only/shared/right-only as fractions of the union.
 ```
+
+### 2x2 Grid Plots
+
+Generate publication-ready multi-panel figures with consistent styling across all datasets:
+
+#### Density Grid Plot
+
+```bash
+# Activate batch processing environment
+source .venv311/bin/activate
+
+# Generate 2x2 grid of density-colored Van Krevelen plots
+python scripts/plot_density_grid.py
+```
+
+Output: `data/density_grid/density_grid.png`
+
+Features:
+- Unified axis limits across all 4 datasets
+- Gaussian kernel density estimation with `scipy.stats.gaussian_kde`
+- Customizable color maps, point sizes, and transparency (see script comments)
+- Direct coordinate computation using `element_ratios` for consistency
+
+#### Lost/Gained Grid Plot
+
+```bash
+# Activate batch processing environment
+source .venv311/bin/activate
+
+# Generate 2x2 grid of Lost/Gained comparison plots
+python scripts/plot_lost_gained_grid.py
+```
+
+Output: `data/comparisons_grid/lost_gained_grid.png`
+
+Features:
+- 4 pairwise comparisons: (1,2), (1,3), (1,4), (2,3)
+- Unified axis limits for visual consistency
+- Color schemes: Red-Green-Gray (default), Red-Blue, Orange-Purple
+- Customizable marker sizes and transparency (see script comments)
+
+**Note**: Both grid scripts include alternative styling options from previous versions as comments. Simply uncomment different sections to experiment with:
+- Different color maps (`viridis`, `plasma`, `inferno`, `magma`, `cividis`)
+- Point sizes (7, 10, 15, 20, 25, 35)
+- Transparency levels (0.35, 0.5, 0.7, 0.85, 1.0)
+- Edge styles (none, black with linewidth)
 
 ## Output Results
 
